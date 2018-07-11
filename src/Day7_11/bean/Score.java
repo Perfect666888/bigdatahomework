@@ -2,7 +2,7 @@ package Day7_11.bean;
 
 public class Score {
     private String sno;
-    private String courceName;
+    private String courceNo;
     private int grade;
 
     public Score() {
@@ -13,7 +13,7 @@ public class Score {
     public String toString() {
         return "Score{" +
                 "sno='" + sno + '\'' +
-                ", courceName='" + courceName + '\'' +
+                ", courceNo='" + courceNo + '\'' +
                 ", grade=" + grade +
                 '}';
     }
@@ -26,12 +26,12 @@ public class Score {
         this.sno = sno;
     }
 
-    public String getCourceName() {
-        return courceName;
+    public String getCourceNo() {
+        return courceNo;
     }
 
-    public void setCourceName(String courceName) {
-        this.courceName = courceName;
+    public void setCourceNo(String courceNo) {
+        this.courceNo = courceNo;
     }
 
     public int getGrade() {
@@ -42,10 +42,10 @@ public class Score {
         this.grade = grade;
     }
 
-    public Score(String sno, String courceName, int grade) {
+    public Score(String sno, String courceNo, int grade) {
 
         this.sno = sno;
-        this.courceName = courceName;
+        this.courceNo = courceNo;
         this.grade = grade;
     }
 }

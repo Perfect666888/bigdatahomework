@@ -1,5 +1,6 @@
 package Day7_11.util;
 
+import Day7_11.bean.Cource;
 import Day7_11.bean.Score;
 import Day7_11.bean.Student;
 import Day7_11.compare.SumSort;
@@ -8,7 +9,7 @@ import java.util.*;
 
 public class SumUtils {
 
-    //获得总分map
+    //获得学生总分map
     public static HashMap<String, Integer> getSumMap() throws Exception{
 
        // 获得每个学生 学号，总分
@@ -110,7 +111,7 @@ public class SumUtils {
     }
 
     //分班级，按照总成绩排名
-    public static void SumSortByClass() throws Exception {
+    public static  HashMap<String, ArrayList<String>> SumSortByClass() throws Exception {
         /*
         2.1.1	分班级排名，将排名后的结果保存到文件，
         需要有学号，姓名，总分，名次。文件名称使用对应科目名称
@@ -152,20 +153,22 @@ public class SumUtils {
         }
 
         //排序并添加名次
-        //输出到文件中
+
         for (Map.Entry<String, ArrayList<String>> entry : classMap.entrySet()) {
             //排序
             Collections.sort(entry.getValue(), new SumSort());
             //添加名次
             Utils.AddRank(entry.getValue());
 
-            //输出到文件
-            String filename ="F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11\\Result\\"+entry.getKey()+".txt";
-            Utils.ArrToFile(entry.getValue(), filename);
-
         }
 
+        return classMap;
+
+
+
     }
+
+
 
 
 }

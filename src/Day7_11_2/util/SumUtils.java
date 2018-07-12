@@ -1,9 +1,11 @@
-package Day7_11.util;
+package Day7_11_2.util;
 
-import Day7_11.bean.Cource;
-import Day7_11.bean.Score;
-import Day7_11.bean.Student;
-import Day7_11.compare.SumSort;
+import Day7_11_2.bean.Cource;
+import Day7_11_2.bean.Score;
+import Day7_11_2.bean.Student;
+import Day7_11_2.compare.SumSort;
+import Day7_11_2.util.ReadUtil;
+import Day7_11_2.util.Utils;
 
 import java.util.*;
 
@@ -17,7 +19,7 @@ public class SumUtils {
         //创建hashmap存储
         HashMap<String, Integer> sumMap = new HashMap<>();
         //用之前获得到成绩表集合更方便
-        List<Score> scores = ReadUtil.fileToArr("F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11\\data\\score.txt", Score.class);
+        List<Score> scores = Day7_11.util.ReadUtil.fileToArr("F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11\\data\\score.txt", Score.class);
 
         //把scores中的数据转移到hashmap中
         //同一个学号的完成成绩累加
@@ -50,59 +52,60 @@ public class SumUtils {
 
         //把学生集合按照文理科分为2个集合
         //获得全部学生的集合
-        List<Student> students = ReadUtil.fileToArr("F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11\\data\\students.txt", Student.class);
+        List<Student> students = Day7_11.util.ReadUtil.fileToArr("F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11\\data\\students.txt", Student.class);
 
-        //创建2个集合去存放学生集合,直接转为字符串类型，方便拼接总成绩和名次
+        //改为map去存储
+        //key 是文理科 value是学生的集合
+        HashMap<String, ArrayList<String>> wlkMap = new HashMap<>();
 
-        //理科集合
-        ArrayList<String> lkArr = new ArrayList<>();
-        //文科集合
-        ArrayList<String> wkArr = new ArrayList<>();
 
-        //遍历全部学生集合，去分割
-        //直接拼接上学生成绩
+        //集合的字符串格式是
+        //学号，姓名，性别，学生班级，总分
         for (Student student : students) {
+            //获得有多少科目（文科还是理科）,作为key
+            String key =student.getClassName().substring(0,2);
+            //拼接集合字符串格式
+            String line =student.getSno()+"\t"+student.getSname()+"\t"+student.getSex()+"\t"+student.getClassName()+"\t"+sumMap.get(student.getSno());
 
-            //获得学生的学号
-            //根据学号去找成绩,转换为字符串
-            String sumGrade = sumMap.get(student.getSno()).toString();
-            //拼接好需要写入的字符串内容
-            //学号，姓名，性别，学生班级，总分
-            String line =student.getSno()+"\t"+student.getSname()+"\t"+student.getSex()+"\t"+student.getClassName()+"\t"+sumGrade;
-            //分割 为2个集合
-            if(student.getClassName().startsWith("理科")){
-                lkArr.add(line);
-            }else {
-                wkArr.add(line);
+            //查找该key在这个是否存在
+            ArrayList<String> values = wlkMap.get(key);
+            if(values==null){
+                //初始化
+                values=new ArrayList<String>();
+                values.add(line);
+                //添加到map中
+                wlkMap.put(key, values);
+            }else{
+                values.add(line);
             }
+
         }
 
-        //查看是否获取到数据
-        //ForUtils.PrintArr(lkArr);
-        //ForUtils.PrintArr(wkArr);
+        //添加排名
+        for (Map.Entry<String, ArrayList<String>> entry : wlkMap.entrySet()) {
+            //获得值 集合
+            ArrayList<String> values = entry.getValue();
 
-        //总分排名
-        //都是list，可以使用collections.sort方法
-        //需要创建一个类去实现comparator
-        Collections.sort(lkArr, new SumSort());
-        Collections.sort(wkArr, new SumSort());
+            SumSort sumSort = new SumSort(4);
 
-        //查看排序后的结果
-       // ForUtils.PrintArr(lkArr);
-      //ForUtils.PrintArr(wkArr);
+            //排序
+            Collections.sort(values, sumSort);
+            //添加名次
+            Utils.AddRank(values);
+        }
+
+        //遍历查看结果
+        //ForUtils.PrintMap(wlkMap);
 
 
-        //添加名次
-        Utils.AddRank(lkArr);
-        Utils.AddRank(wkArr);
+        //输出到文件
+        for (Map.Entry<String, ArrayList<String>> entry : wlkMap.entrySet()) {
+            //获得文件名
+            String fileName = "F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11_2\\Result\\"+ entry.getKey()+"Map.txt";
+            Utils.ArrToFile(entry.getValue(), fileName);
 
-        //查看添加名次后的结果
-         //ForUtils.PrintArr(lkArr);
-       // ForUtils.PrintArr(wkArr);
 
-        //写入到文件中
-        Utils.ArrToFile(lkArr, "F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11\\Result\\理科总分排名.txt");
-        Utils.ArrToFile(wkArr, "F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11\\Result\\文科总分排名.txt");
+        }
 
 
 
@@ -112,7 +115,7 @@ public class SumUtils {
     }
 
     //分班级，按照总成绩排名
-    public static  HashMap<String, ArrayList<String>> SumSortByClass() throws Exception {
+   public static  HashMap<String, ArrayList<String>> SumSortByClass() throws Exception {
         /*
         2.1.1	分班级排名，将排名后的结果保存到文件，
         需要有学号，姓名，总分，名次。文件名称使用对应科目名称
@@ -157,7 +160,8 @@ public class SumUtils {
 
         for (Map.Entry<String, ArrayList<String>> entry : classMap.entrySet()) {
             //排序
-            Collections.sort(entry.getValue(), new SumSort());
+            SumSort sumSort = new SumSort(2);
+            Collections.sort(entry.getValue(), sumSort);
             //添加名次
             Utils.AddRank(entry.getValue());
 

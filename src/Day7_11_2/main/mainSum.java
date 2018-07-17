@@ -18,7 +18,7 @@ public class mainSum {
 //        for (Map.Entry<String, ArrayList<String>> entry : classMap.entrySet()) {
 //            //输出到文件
 //            String filename ="F:\\BigData\\IDEA\\bigdatahomework\\src\\Day7_11\\Result\\"+entry.getKey()+".txt";
-//            Utils.ArrToFile(entry.getValue(), filename);
+//            RlUtils.ArrToFile(entry.getValue(), filename);
 //        }
 
 
